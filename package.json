@@ -11,6 +11,7 @@
   "author": "Carvin Singian",
   "license": "ISC",
   "dependencies": {
+    "atob": "^2.1.2",
     "bcryptjs": "^2.4.3",
     "concurrently": "^5.2.0",
     "config": "^3.3.1",
@@ -18,7 +19,8 @@
     "express-validator": "^6.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.5.9",
-    "mongoose": "^5.9.22"
+    "mongoose": "^5.9.22",
+    "uuid": "^8.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

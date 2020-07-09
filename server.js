@@ -20,5 +20,6 @@ server.get('/', (req, res) => {
 server.use(express.json());
 server.use('/api/user', require('./router/users'));
 server.use('/api/auth', require('./router/auth'));
+server.use('/api/room', require('./router/conference_room'));
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));

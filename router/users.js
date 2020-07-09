@@ -3,9 +3,11 @@ const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const config = require('config');
+const atob = require("atob");
 const User = require('../models/user');
 
 const router = express.Router();
+
 
 const checkToken = (req, res, next) => {
   const header = req.headers['authorization'];
@@ -23,16 +25,25 @@ const checkToken = (req, res, next) => {
 }
 
 
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1])).user;
+  } catch (err) {
+    return err.message;
+  }
+};
+
+
 // @route     GET /api/user/all
 // @desc      Get all user accounts
 // @access    Public
 router.get('/all', async (req, res) => {
   try {
     const users = await User.find()
-    res.json(users);
+    return res.json(users);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    return res.status(500).send('Server error');
   }
 })
 
@@ -104,12 +115,12 @@ router.post('/register',
         },
         (err, token) => {
           if (err) throw err;
-          res.json({ token });
+          return res.json({ token });
         }
       );
     } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server error');
+      return res.status(500).send('Server error');
     }
   })
 
@@ -123,11 +134,17 @@ router.patch('/:username/update',
     check('password', 'Please enter a password with 8 or more characters').isLength({ min: 8 })
   ],
   async (req, res) => {
-    jwt.verify(req.body.sessionToken, config.get('jwtSecret'), (err) => {
+    jwt.verify(req.token, config.get('jwtSecret'), (err) => {
       if (err) {
         res.status(401).json({ msg: "Invalid token", error: err })
       }
-    })
+    });
+
+    const loggedInUser = (parseJwt(req.token));
+
+    if (loggedInUser.username != req.params.username) {
+      res.status(403).json({ msg: "Operation not allowed. Must be signed in as user" });
+    }
 
     const errors = validationResult(req);
 
@@ -137,8 +154,6 @@ router.patch('/:username/update',
 
     try {
       const requestBody = req.body;
-      //TODO requires authentication
-      //returns an array
       const existingUser = await User.findOne({ "username": req.params.username });
 
       if (existingUser === null) {
@@ -156,10 +171,10 @@ router.patch('/:username/update',
       }
 
       const updatedUser = await existingUser.save();
-      res.json(updatedUser);
+      return res.json(updatedUser);
     } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server error');
+      return res.status(500).send('Server error');
     }
   })
 
@@ -170,11 +185,17 @@ router.patch('/:username/update',
 router.delete('/:username/delete',
   checkToken,
   async (req, res) => {
-    jwt.verify(req.body.sessionToken, config.get('jwtSecret'), (err) => {
+    jwt.verify(req.token, config.get('jwtSecret'), (err) => {
       if (err) {
         res.status(401).json({ msg: "Invalid token", error: err })
       }
     });
+
+    const loggedInUser = (parseJwt(req.token));
+
+    if (loggedInUser.username != req.params.username) {
+      res.status(403).json({ msg: "Operation not allowed. Must be signed in as user" });
+    }
 
     try {
       const existingUser = await User.findOne({ "username": req.params.username });
@@ -184,10 +205,10 @@ router.delete('/:username/delete',
       }
 
       const deletedUser = await existingUser.delete();
-      res.send(deletedUser);
+      return res.json(deletedUser);
     } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server error');
+      return res.status(500).send('Server error');
     }
   })
 

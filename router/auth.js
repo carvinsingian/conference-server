@@ -7,12 +7,14 @@ const User = require('../models/user');
 
 const router = express.Router();
 
+
 // @route     GET /api/auth
 // @desc      Get logged in user
 // @access    Private
 router.get('/', async (req, res) => {
   res.send('Get logged in user');
 });
+
 
 // @route     POST /api/auth/login
 // @desc      Auth user & get token
