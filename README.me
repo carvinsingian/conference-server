@@ -1,5 +1,98 @@
-react application for conference room
+Server application for conference room
 
-To install dependencies: run npm install on root folder and frontend folder
+To install dependencies: run npm install on root folder
 
-To run application: npm run dev
+To run application: npm run server
+
+
+Current API Routes:
+
+1. GET - /api/user/all
+- description: returns a list of all created user accounts
+
+2. GET - /api/user/:username
+- description: returns a user given a username
+
+3. POST - /api/user/register
+- input:
+    -username (required)
+    -password (required)
+      -needs to be 8 characters or above
+- description: creates a user
+  
+4. PATCH - /api/user/:username/update
+- input:
+    -username (required)
+    -password (optional)
+    -mobile_token (optional)
+- description: 
+  -updates a user given a username
+  -must be signed in as the user
+
+5. PATCH - /:username/delete
+- input: 
+    -username (required)
+- description: 
+  -deletes a user
+  -must be signed in as the user
+
+6. GET - /api/room/:room_id
+- input:
+  -room_id (required)
+- description:
+  -returns the properties of a room given a room_id
+
+7. POST - /api/room/create
+-input:
+  -room_name (required)
+  -capacity_limit (optional) (default = 5)
+-descrition:
+  -creates a conference room in the database
+
+8. PATCH - /api/room/change_host
+-input:
+  -username (required)
+  -room_id (required)
+-description:
+  -changes the host of a room to the user provided
+  -host user has to be signed in
+
+9. PATCH - /api/room/join
+-input:
+  -room_id (required)
+-description:
+  -user joins the room with the room_id
+  -cannot join if capacity limit is exceeded
+  -cannot join if they are already the host
+  -user joining has to be signed in
+
+10 PATCH - /api/room/leave
+-input:
+  -room_id (required)
+-description:
+  -user leave the room with the room_id
+  -cannot leave if they are the host
+  -user leaving has to be signed in
+  -user has to be in the room for them to leave
+
+11. GET - /api/room/get/:username
+-input:
+  -username (required)
+-description:
+  -returns a list of rooms the user is in
+
+12. POST - /api/auth/login
+-input:
+  -username (required)
+  -password (required)
+-description:
+  -used to login a user
+  -returns a token that can be used to access private APIs
+
+13. POST - /api/auth/verify
+-input:
+  -sessionToken
+-description
+  -used to verify user token
+
+

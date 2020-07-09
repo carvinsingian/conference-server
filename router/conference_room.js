@@ -34,9 +34,13 @@ const parseJwt = (token) => {
 };
 
 
-// @route     GET /api/room/:uuid
-// @desc      get conference room details by uuid
+// @route     GET /api/room/:room_id
+// @desc      Get conference room details by uuid
 // @access    Public
+/*
+Parameters
+@room_id - uuid of room
+*/
 router.get('/:room_id', async (req, res) => {
   try {
     const conferenceRoom = await ConferenceRoom.findOne({ _id: req.params.room_id });
@@ -54,8 +58,13 @@ router.get('/:room_id', async (req, res) => {
 
 
 // @route     POST /api/room/create
-// @desc      create conference room
+// @desc      Create conference room in database
 // @access    Private
+/*
+Parameters
+@room_name - required - name of room to be created
+@capacity_limit - optional - capacity limit of the room to be created
+*/
 router.post('/create',
   checkToken,
   [
@@ -97,8 +106,13 @@ router.post('/create',
 
 
 // @route     PATCH /api/room/change_host
-// @desc      change the host of a room
-// @access    Private  
+// @desc      Change the host of a room
+// @access    Private
+/*
+Parameters
+@username - required - unique username of user that will be the new host
+@room_id - required - uuid of room
+*/
 router.patch('/change_host',
   checkToken,
   [
@@ -147,8 +161,12 @@ router.patch('/change_host',
 
 
 // @route     PATCH /api/room/join
-// @desc      join a room
+// @desc      Join a conference room
 // @access    Private
+/*
+Parameters
+@room_id - required - uuid of room to be joined
+*/
 router.patch('/join',
   checkToken,
   [
@@ -201,8 +219,12 @@ router.patch('/join',
 
 
 // @route     PATCH /api/room/leave
-// @desc      leave a room
+// @desc      leave a conference room
 // @access    Private
+/*
+Parameters
+@room_id - required - uuid of room to be left
+*/
 router.patch('/leave',
   checkToken,
   [
@@ -253,8 +275,12 @@ router.patch('/leave',
 
 
 // @route     GET /api/room/get/:username
-// @desc      Get list of rooms the user is in
+// @desc      Get an array of rooms the user is in
 // @access    Public
+/*
+Parameters
+@username - required - unqiue user name of user
+*/
 router.get('/get/:username',
   async (req, res) => {
     try {

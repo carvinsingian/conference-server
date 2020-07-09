@@ -49,8 +49,12 @@ router.get('/all', async (req, res) => {
 
 
 // @route     GET /api/user/:username
-// @desc      Get a user account by username
+// @desc      Get a user account using a username
 // @access    Public
+/*
+Parameters
+@username - required - unique user name
+*/
 router.get('/:username', async (req, res) => {
   try {
     const user = await User.findOne({ "username": req.params.username })
@@ -67,9 +71,14 @@ router.get('/:username', async (req, res) => {
 })
 
 
-// @route     POST /api/user/signup
+// @route     POST /api/user/register
 // @desc      Register a user
 // @access    Public
+/*
+Parameters
+@username - required - unique user name
+@password - required - 8 or more character user password
+*/
 router.post('/register',
   [
     check('username', 'Please add a username').not().isEmpty(),
@@ -126,8 +135,14 @@ router.post('/register',
 
 
 // @route     PATCH /api/user/:username/update
-// @desc      Update user details
+// @desc      Update user details using a username
 // @access    Private
+/*
+Parameters
+@username - required - unique username of user to be updated
+@password - optional - 8 or more character user password
+@mobile_token - optional - optional mobile token
+*/
 router.patch('/:username/update',
   checkToken,
   [
@@ -180,8 +195,12 @@ router.patch('/:username/update',
 
 
 // @route     DELETE /api/user/:username/delete
-// @desc      Delete a user
+// @desc      Delete a user using a username
 // @access    Private
+/*
+Parameters
+@username - required - unique username of user to be deleted
+*/
 router.delete('/:username/delete',
   checkToken,
   async (req, res) => {
